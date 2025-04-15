@@ -31,7 +31,7 @@ This project is open source and thrives on collaboration! Join us in shaping the
 - Clone the Repository
 
 ### Network Configuration
-- The project is built specifically for the Sepolia Testnet and is not configured to work with the Ethereum Mainnet. Connecting with MetaMask using Mainnet may result in errors.
+Note: The project is built specifically for the Sepolia Testnet and is not configured to work with the Ethereum Mainnet. Connecting with MetaMask using Mainnet may result in errors.
   
 ```git clone https://github.com/yourusername/nftorium.git``` 
 ```cd nftorium```
@@ -40,6 +40,7 @@ This project is open source and thrives on collaboration! Join us in shaping the
 ```npm install```
 
 ### Configure Environment Variables
+Note: Only for smart contract contribution
 Create a .env file in the root directory with the following:
 ```REACT_APP_INFURA_API_KEY=your-infura-key```
 ```REACT_APP_CONTRACT_ADDRESS=your-smart-contract-address```  
@@ -52,6 +53,10 @@ Create a .env file in the root directory with the following:
 ```npx hardhat run scripts/deploy.js --network sepolia```
 - Start the Development Server
 ```npm run dev```
+
+### Setting Metamask for this project
+- Visit [Meta Mask](https://metamask.io/en-GB/download)
+- Set sepolia testnet in wallet before connecting this project with wallet
 
 # 🤝 Contributing
 We love contributions! Here's how you can help:
