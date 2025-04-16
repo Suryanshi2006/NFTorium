@@ -1,118 +1,153 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
-import { MyContext } from '../utils/context';
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { MyContext } from "../utils/context";
 import ABI from "../utils/ABI.json";
 import { ethers, Contract } from "ethers";
 import Address from "../utils/Address.json";
-import { desc } from 'framer-motion/client';
-import Button from './Button';
+import { desc } from "framer-motion/client";
+import Button from "./Button";
 
 const NFT = () => {
-    const tokenId = useParams().id;
-    console.log(tokenId)
-    // const { provider } = useContext(MyContext);
-    const abi = ABI.abi;
-    const contractAddress = Address.contractAddress;
-    // console.log(param);
+  const tokenId = useParams().id;
+  console.log(tokenId);
+  // const { provider } = useContext(MyContext);
+  const abi = ABI.abi;
+  const contractAddress = Address.contractAddress;
+  // console.log(param);
 
-     const [nftimg, setnftimg] = useState(null);
-     const [owner, setOwner] = useState(null);
-     const [seller, setSeller] = useState(null);
-     const [reSellPrice, setReSellPrice] = useState(null);
-     const [price, setPrice] = useState(null);
-     const [name, setName] = useState(null);
-     const [desc, setDesc] = useState(null);
-     const [message, setMessage] = useState(null);
-     const [result, setResult] = useState(null);
-     const [relistMessage, setRelistMessage] = useState(null);
-     const [displayPrice, setDisplayPrice] = useState(0);
-     const [address,setAddress] = useState(null);
-     const [pricePop, setPricePop] = useState(null);
-     const [alert, setAlert] = useState(false);
-     const navigate = useNavigate();
-     let provider;
+  const [nftimg, setnftimg] = useState(null);
+  const [owner, setOwner] = useState(null);
+  const [seller, setSeller] = useState(null);
+  const [reSellPrice, setReSellPrice] = useState(null);
+  const [price, setPrice] = useState(null);
+  const [name, setName] = useState(null);
+  const [desc, setDesc] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [result, setResult] = useState(null);
+  const [relistMessage, setRelistMessage] = useState(null);
+  const [displayPrice, setDisplayPrice] = useState(0);
+  const [address, setAddress] = useState(null);
+  const [pricePop, setPricePop] = useState(null);
+  const [alert, setAlert] = useState(false);
+  const navigate = useNavigate();
+  let provider;
 
+  const getNFTImage = async () => {
+    provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    setAddress(signer.address);
+    const contract = new Contract(contractAddress, abi, signer);
+    const res = await contract.tokenURI(tokenId);
+    console.log("res", res);
+    const fetchedData = await fetch(res);
+    const jsonData = await fetchedData.json();
+    console.log("jsonData", typeof jsonData);
+    jsonData.image ? setnftimg(jsonData.image) : setnftimg(jsonData.img_url);
+    console.log(jsonData.image);
+    setOwner(await contract.ownerOf(tokenId));
+    const details = await contract.getListedTokenForId(tokenId);
 
-     const getNFTImage = async () => {
-         provider = new ethers.BrowserProvider(window.ethereum);
-       const signer = await provider.getSigner();
-       setAddress(signer.address);
-       const contract = new Contract(contractAddress, abi, signer);
-       const res = await contract.tokenURI(tokenId);
-       console.log("res", res);
-       const fetchedData = await fetch(res);
-       const jsonData = await fetchedData.json();
-       console.log("jsonData", typeof jsonData);
-       jsonData.image ? setnftimg(jsonData.image) : setnftimg(jsonData.img_url);
-       console.log(jsonData.image);
-       setOwner(await contract.ownerOf(tokenId));
-       const details = await contract.getListedTokenForId(tokenId);
-       
-       setName(jsonData.name);
-       setResult(details);
-       setSeller(details.seller);
-       const wei = details.price;
-       setPrice(wei);
-       setDesc(jsonData.description);
-  
+    setName(jsonData.name);
+    setResult(details);
+    setSeller(details.seller);
+    const wei = details.price;
+    setPrice(wei);
+    setDesc(jsonData.description);
 
-       try {
-         let priceETH = ethers.formatEther(wei.toString());
-         setDisplayPrice(priceETH);
-       } catch (err) {
-         console.log(err);
-       }
-     };
+    try {
+      let priceETH = ethers.formatEther(wei.toString());
+      setDisplayPrice(priceETH);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
+  const handleRelistNFT = async () => {
+    if (reSellPrice == null || reSellPrice <= 0) return;
+    provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    console.log(owner, signer.address);
+    if (owner == signer.address) {
+      let valueInWei = "0";
+      if (reSellPrice != null) {
+        valueInWei = ethers.parseEther(reSellPrice.toString());
+      }
+      const contract = new Contract(contractAddress, abi, signer);
+      const res = await contract.relistToken(tokenId, valueInWei, {
+        value: ethers.parseEther("0.01"),
+      });
+      setRelistMessage("Listed");
+      await res.wait(2);
+      // setOwner(await contract.ownerOf(tokenId));
+      navigate("/profile");
+    } else {
+    }
+  };
 
-          const handleRelistNFT = async () => {
-            if(reSellPrice == null || reSellPrice <= 0) return;
-            provider = new ethers.BrowserProvider(window.ethereum);
-            const signer = await provider.getSigner();
-            console.log(owner,signer.address);
-            if(owner == signer.address){
-              let valueInWei = "0";
-              if (reSellPrice != null) {
-                valueInWei = ethers.parseEther(reSellPrice.toString());
-              }
-              const contract = new Contract(contractAddress, abi, signer);
-              const res = await contract.relistToken(tokenId, valueInWei, {
-                value: ethers.parseEther("0.01"),
-              });
-              setRelistMessage("Listed");
-              await res.wait(2);
-              // setOwner(await contract.ownerOf(tokenId));
-              navigate("/profile")
-            }
-            else{
+  const handleBuyNFT = async () => {
+    try {
+      setMessage("Processing...");
 
-            }
-          };
+      provider = new ethers.BrowserProvider(window.ethereum);
 
-                 const handleBuyNFT = async () => {
-                   try {
-                     provider = new ethers.BrowserProvider(window.ethereum);
-                     const signer = await provider.getSigner();
-                     const contract = new Contract(
-                       contractAddress,
-                       abi,
-                       signer
-                     );
-                     const res = await contract.executeSale(tokenId, {
-                       value: price,
-                     });
-                     await res.wait(2);
-                     setMessage("Listed");
-                     setOwner(await contract.ownerOf(tokenId));
-                   } catch (err) {
-                     setAlert(true);
-                   }
-                 };
+      const signer = await provider.getSigner();
 
-     useEffect(() => {
-       getNFTImage();
-     }, []);
+      const contract = new Contract(contractAddress, abi, signer);
 
+      const balance = await provider.getBalance(signer.address);
+
+      if (balance < price) {
+        setAlert(true);
+        setMessage("Insufficient funds");
+
+        setTimeout(() => {
+          setAlert(false);
+          setMessage(null);
+        }, 3000);
+
+        return;
+      }
+
+      const tx = await contract.executeSale(tokenId, {
+        value: price,
+      });
+
+      setMessage("Transaction submitted...");
+
+      await tx.wait(2);
+
+      setMessage("Listed");
+
+      setOwner(await contract.ownerOf(tokenId));
+
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err) {
+      console.error("Transaction failed:", err);
+
+      let errorMessage = "Transaction failed";
+
+      if (err.code === "INSUFFICIENT_FUNDS") {
+        errorMessage = "Insufficient funds to complete the purchase";
+      } else if (err.code === "ACTION_REJECTED") {
+        errorMessage = "Transaction rejected by user";
+      } else if (err.message.includes("gas")) {
+        errorMessage = "Insufficient gas funds";
+      }
+
+      setAlert(true);
+
+      setMessage(errorMessage);
+
+      setTimeout(() => {
+        setAlert(false);
+        setMessage(null);
+      }, 3000);
+    }
+  };
+
+  useEffect(() => {
+    getNFTImage();
+  }, []);
 
   return (
     <div className=" bg-black py-20 px-16">
@@ -283,6 +318,6 @@ const NFT = () => {
       </section>
     </div>
   );
-}
+};
 
-export default NFT
+export default NFT;
