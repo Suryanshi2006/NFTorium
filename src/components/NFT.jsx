@@ -7,7 +7,7 @@ import Button from "./Button";
 
 const NFT = () => {
   const tokenId = useParams().id;
-  // const { provider } = useContext(MyContext);
+
   const abi = ABI.abi;
   const contractAddress = Address.contractAddress;
 
