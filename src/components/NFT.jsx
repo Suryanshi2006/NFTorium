@@ -76,7 +76,6 @@ const NFT = () => {
       await res.wait(2);
       // setOwner(await contract.ownerOf(tokenId));
       navigate("/profile");
-    } else {
     }
   };
 
