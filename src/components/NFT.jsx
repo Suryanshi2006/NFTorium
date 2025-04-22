@@ -9,11 +9,9 @@ import Button from "./Button";
 
 const NFT = () => {
   const tokenId = useParams().id;
-  console.log(tokenId);
   // const { provider } = useContext(MyContext);
   const abi = ABI.abi;
   const contractAddress = Address.contractAddress;
-  // console.log(param);
 
   const [nftimg, setnftimg] = useState(null);
   const [owner, setOwner] = useState(null);
@@ -38,12 +36,12 @@ const NFT = () => {
     setAddress(signer.address);
     const contract = new Contract(contractAddress, abi, signer);
     const res = await contract.tokenURI(tokenId);
-    console.log("res", res);
+
     const fetchedData = await fetch(res);
     const jsonData = await fetchedData.json();
-    console.log("jsonData", typeof jsonData);
+
     jsonData.image ? setnftimg(jsonData.image) : setnftimg(jsonData.img_url);
-    console.log(jsonData.image);
+
     setOwner(await contract.ownerOf(tokenId));
     const details = await contract.getListedTokenForId(tokenId);
 
@@ -66,7 +64,7 @@ const NFT = () => {
     if (reSellPrice == null || reSellPrice <= 0) return;
     provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
-    console.log(owner, signer.address);
+
     if (owner == signer.address) {
       let valueInWei = "0";
       if (reSellPrice != null) {
@@ -122,7 +120,6 @@ const NFT = () => {
 
       setTimeout(() => setMessage(null), 3000);
     } catch (err) {
-      console.error("Transaction failed:", err);
 
       let errorMessage = "Transaction failed";
 
