@@ -1,5 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
-require("dotenv").config();
+require('dotenv').config();
 require("hardhat/config");
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -17,6 +17,3 @@ module.exports = {
     },
   },
 };
-
-console.log("RPC_URL_KEY:", process.env.RPC_URL_KEY);
-console.log("PRIVATE_KEY:", process.env.PRIVATE_KEY);
