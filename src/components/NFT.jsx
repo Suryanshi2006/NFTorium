@@ -1,10 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { MyContext } from "../utils/context";
 import ABI from "../utils/ABI.json";
 import { ethers, Contract } from "ethers";
 import Address from "../utils/Address.json";
-import { desc } from "framer-motion/client";
 import Button from "./Button";
 
 const NFT = () => {
