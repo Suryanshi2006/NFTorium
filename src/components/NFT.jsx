@@ -150,7 +150,7 @@ const NFT = () => {
   }, []);
 
   return (
-    <div className=" bg-black py-20 px-16">
+    <div className="px-16 py-20 bg-black ">
       <section class=" bg-white md:py-16 dark:bg-black antialiased">
         <div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
           <div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
@@ -222,7 +222,7 @@ const NFT = () => {
                   Add to cart
                 </a>
               </div>
-              <div className=" pb-4 pt-10 flex w-full ">
+              <div className="flex w-full pt-10 pb-4 ">
                 {owner == address ? (
                   <div className="relative w-1/2 mr-4">
                     <Button
@@ -245,7 +245,7 @@ const NFT = () => {
                             onClick={handleRelistNFT}
                           />
                           <div
-                            className="w-full rounded-lg ml-1 bg-black text-white flex justify-center items-center font-semibold cursor-pointer"
+                            className="flex items-center justify-center w-full ml-1 font-semibold text-white bg-black rounded-lg cursor-pointer"
                             onClick={() => setPricePop(false)}
                           >
                             X{" "}
@@ -292,17 +292,21 @@ const NFT = () => {
               ) : (
                 <></>
               )}
-              {alert ? (
-                <div>
-                  <div
-                    class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-red-500 z-100 absolute top-20 "
-                    role="alert"
-                  >
-                    <span class="font-medium">Failed !</span> not enough crypto
-                  </div>
+
+              {message && (
+                <div
+                  className={`absolute p-4 mb-4 text-sm rounded-lg z-100 top-20 ${message.includes("failed") || message.includes("Insufficient") ? "text-red-800 bg-blue-50 dark:bg-gray-800 dark:text-red-500" : message.includes("successful") ? "text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400" : "text-blue-800 bg-blue-50 dark:bg-gray-800 dark:text-blue-400"}`}
+                  role="alert"
+                >
+                  <span className="font-medium">
+                    {message.includes("failed") || message.includes("Insufficient")
+                      ? "Error! "
+                      : message.includes("successful")
+                        ? "Success! "
+                        : "Processing! "}
+                  </span>
+                  {message}
                 </div>
-              ) : (
-                <div></div>
               )}
               <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
 
