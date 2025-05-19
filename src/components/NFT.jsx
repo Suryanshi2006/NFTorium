@@ -24,7 +24,6 @@ const NFT = () => {
   const [displayPrice, setDisplayPrice] = useState(0);
   const [address, setAddress] = useState(null);
   const [pricePop, setPricePop] = useState(null);
-  const [alert, setAlert] = useState(false);
   const navigate = useNavigate();
   let provider;
 
@@ -92,11 +91,9 @@ const NFT = () => {
       const balance = await provider.getBalance(signer.address);
 
       if (balance < price) {
-        setAlert(true);
         setMessage("Insufficient funds");
 
         setTimeout(() => {
-          setAlert(false);
           setMessage(null);
         }, 3000);
 
@@ -117,7 +114,6 @@ const NFT = () => {
 
       setTimeout(() => setMessage(null), 3000);
     } catch (err) {
-
       let errorMessage = "Transaction failed";
 
       if (err.code === "INSUFFICIENT_FUNDS") {
@@ -128,12 +124,9 @@ const NFT = () => {
         errorMessage = "Insufficient gas funds";
       }
 
-      setAlert(true);
-
       setMessage(errorMessage);
 
       setTimeout(() => {
-        setAlert(false);
         setMessage(null);
       }, 3000);
     }
@@ -281,7 +274,8 @@ const NFT = () => {
                   className="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
                   role="alert"
                 >
-                  <span className="font-medium">Wait !</span> Transfering ownership
+                  <span className="font-medium">Wait !</span> Transfering
+                  ownership
                 </div>
               ) : (
                 <></>
@@ -289,15 +283,23 @@ const NFT = () => {
 
               {message && (
                 <div
-                  className={`absolute p-4 mb-4 text-sm rounded-lg z-100 top-20 ${message.includes("failed") || message.includes("Insufficient") ? "text-red-800 bg-blue-50 dark:bg-gray-800 dark:text-red-500" : message.includes("successful") ? "text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400" : "text-blue-800 bg-blue-50 dark:bg-gray-800 dark:text-blue-400"}`}
+                  className={`absolute p-4 mb-4 text-sm rounded-lg z-100 top-20 ${
+                    message.includes("failed") ||
+                    message.includes("Insufficient")
+                      ? "text-red-800 bg-blue-50 dark:bg-gray-800 dark:text-red-500"
+                      : message.includes("successful")
+                      ? "text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400"
+                      : "text-blue-800 bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
+                  }`}
                   role="alert"
                 >
                   <span className="font-medium">
-                    {message.includes("failed") || message.includes("Insufficient")
+                    {message.includes("failed") ||
+                    message.includes("Insufficient")
                       ? "Error! "
                       : message.includes("successful")
-                        ? "Success! "
-                        : "Processing! "}
+                      ? "Success! "
+                      : "Processing! "}
                   </span>
                   {message}
                 </div>
